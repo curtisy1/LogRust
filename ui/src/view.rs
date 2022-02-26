@@ -14,16 +14,19 @@ use rfd::{AsyncFileDialog};
 use std::{path::Path};
 
 use logrust_core::{file_handler::{self, LogEntry}};
+use crate::style;
 
 pub struct LogUIView {
   files: file_handler::LogEntry,
   button_state: button::State,
+  theme: style::Theme,
 }
 
 #[derive(Debug, Clone)]
 pub enum Message {
   ButtonPressed,
   FilesSelected(Box<Path>),
+  ThemeChanged(style::Theme),
 }
 
 impl Application for LogUIView {
@@ -34,6 +37,7 @@ impl Application for LogUIView {
   fn new(_flags: ()) -> (LogUIView, Command<Message>) {
     (
       LogUIView {
+        theme: style::Theme::Dark,
         files: LogEntry::new(),
         button_state: button::State::new(),
       },
@@ -47,6 +51,11 @@ impl Application for LogUIView {
 
   fn update(&mut self, message: Message, _clipboard: &mut iced::Clipboard) -> Command<Message> {
     match message {
+      Message::ThemeChanged(theme) => {
+        self.theme = theme;
+
+        Command::none()
+      },
       Message::ButtonPressed => Command::perform(
         async {
           let opened_files = AsyncFileDialog::new().pick_file().await;
@@ -66,6 +75,7 @@ impl Application for LogUIView {
     let LogUIView { files, .. } = self;
 
     let file_picker = Button::new(&mut self.button_state, Text::new("Choose a file"))
+      .style(self.theme)
       .on_press(Message::ButtonPressed);
 
     let debug_lines = Text::new(format!("Contains {} debug statements", files.line_severity.debug));
@@ -92,6 +102,7 @@ impl Application for LogUIView {
     Container::new(content)
       .width(Length::Fill)
       .height(Length::Fill)
+      .style(self.theme)
       .center_x()
       .center_y()
       .into()
