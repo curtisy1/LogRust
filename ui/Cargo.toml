@@ -1,0 +1,9 @@
+[package]
+name = "logrust_ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iced = "0.3"
+rfd = { version = "0.7", default-features = false, features = ["parent"] }
+logrust_core = { path = "../core" }

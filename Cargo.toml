@@ -1,0 +1,11 @@
+[package]
+name = "logrust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iced = "0.3"
+logrust_core = { path = "./core" }
+logrust_ui = { path = "./ui" }
+rfd = { version = "0.7", default-features = false, features = ["parent"] }
+serde = { version = "1.0", features = ["derive"] }
