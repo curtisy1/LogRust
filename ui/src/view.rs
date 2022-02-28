@@ -10,8 +10,8 @@ use iced::{
   Rule,
   Text,
 };
-use rfd::{AsyncFileDialog};
-use std::{path::Path};
+use rfd::{AsyncFileDialog, FileHandle};
+use std::{path::Path, fs::File};
 
 use logrust_core::{file_handler::{self, LogEntry}};
 use crate::style;
@@ -59,12 +59,17 @@ impl Application for LogUIView {
       Message::ButtonPressed => Command::perform(
         async {
           let opened_files = AsyncFileDialog::new().pick_file().await;
-          opened_files.expect("Should have picked a file").path().into()
+          match opened_files {
+            Some(file_handler) => file_handler.path().into(),
+            None => FileHandle::from(std::path::PathBuf::new()).path().into()
+          }
         },
         Message::FilesSelected,
       ),
       Message::FilesSelected(file) => {
-        self.files = file_handler::parse_log_file(std::fs::File::open(file).expect("fsgsgs")).expect("Something failed");
+        if file.exists() {
+          self.files = file_handler::parse_log_file(File::open(file).unwrap()).expect("Something failed");
+        }
 
         Command::none()
       }
