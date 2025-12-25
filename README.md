@@ -1,3 +1,7 @@
+# Archival note
+In an effort to consolidate most of my personal repositories into a single platform, this repository won't see any more development here.
+You can find an unarchived version of the repository over on [Codeberg](https://codeberg.org/curtisy/LogRust)
+
 # LogRust
 A log file viewer written in Rust using [iced-rs](https://github.com/iced-rs/iced)
 
